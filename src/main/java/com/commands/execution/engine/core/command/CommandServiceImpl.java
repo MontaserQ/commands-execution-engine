@@ -9,6 +9,7 @@ import com.commands.execution.engine.core.command.exception.CommandServiceExcept
 import org.springframework.context.ApplicationContext;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,6 +19,14 @@ public class CommandServiceImpl implements CommandService {
 
     public CommandServiceImpl(final ApplicationContext context) {
         this.context = context;
+    }
+
+    @Override
+    public List<CommandMessage> execute(final Collection<CommandData<?>> collection) throws CommandServiceException {
+        final List<CommandMessage> result = new ArrayList<>();
+        for (CommandData<?> commandData : collection)
+            result.addAll(execute(commandData));
+        return result;
     }
 
     @Override

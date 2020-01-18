@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,7 +32,7 @@ class CommandServiceImplTest {
 
     @InjectMocks
     private CommandServiceImpl underTest;
-    
+
     @Test
     public void testExecuteSuccessful() throws CommandServiceException {
         when(context.getBean(CommandB.class)).thenReturn(new CommandB());
@@ -46,6 +47,31 @@ class CommandServiceImplTest {
         assertThat(result.get(1).getMessage()).isEqualTo("Execute command B");
         assertThat(result.get(1).getType()).isEqualTo(CommandMessage.Type.INFO);
         assertThat(result.get(1).getLevel()).isEqualTo(CommandMessage.Level.CHILD);
+    }
+
+
+    @Test
+    public void testExecuteCollectionOfCommandsSuccessfully() throws CommandServiceException {
+        when(context.getBean(CommandB.class)).thenReturn(new CommandB());
+        when(context.getBean(CommandA.class)).thenReturn(new CommandA());
+
+        Collection<CommandData<?>> commands = new ArrayList<>();
+        final CommandAData data = new CommandAData("Parent command", 4);
+
+        commands.add(data);
+        commands.add(data);
+
+        final List<CommandMessage> result = underTest.execute(commands);
+
+        for (int i = 0; i < 4; i += 2) {
+            assertThat(result.get(i).getMessage()).isEqualTo("Execute command A");
+            assertThat(result.get(i).getType()).isEqualTo(CommandMessage.Type.INFO);
+            assertThat(result.get(i).getLevel()).isEqualTo(CommandMessage.Level.PARENT);
+
+            assertThat(result.get(i + 1).getMessage()).isEqualTo("Execute command B");
+            assertThat(result.get(i + 1).getType()).isEqualTo(CommandMessage.Type.INFO);
+            assertThat(result.get(i + 1).getLevel()).isEqualTo(CommandMessage.Level.CHILD);
+        }
     }
 
     @Test
