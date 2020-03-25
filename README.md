@@ -1,3 +1,4 @@
 # commands-execution-engine
 
-A powerful project base execution pattern you can use with any project and build several layers on top of it.
+Project core business logic pattern that follows S.O.L.I.D Princibles
+more info soon....
