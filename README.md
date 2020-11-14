@@ -1,3 +1,3 @@
 # commands-execution-engine
 
-Project core business logic pattern that follows S.O.L.I.D Princibles.
+Busy to write doc
